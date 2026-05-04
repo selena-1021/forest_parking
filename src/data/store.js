@@ -44,15 +44,25 @@ export const newCar = () => ({ id:`c${++_cid}`, car:'', model:'', phone:'' });
 // 초기 res 구조: 호수별 cars 배열
 const emptyUnit = () => ({ cars: [newCar()] });
 
+// 순환 순서: 01→02→03→04→05→06→07→08→09→11→01 (10·12·13 고정)
+export const ROTATE_ORDER = ['01','02','03','04','05','06','07','08','09','11'];
+export const FIXED_SPOTS  = ['10','12','13'];
+
 // 초기 asgn 구조: 면별 { unit, carId }
 const initAsgn = () => ({
-  '01':{ unit:'101', carId:'' }, '02':{ unit:'102', carId:'' },
-  '03':{ unit:'103', carId:'' }, '04':{ unit:'201', carId:'' },
-  '05':{ unit:'202', carId:'' }, '06':{ unit:'203', carId:'' },
-  '07':{ unit:'301', carId:'' }, '08':{ unit:'302', carId:'' },
-  '09':{ unit:'303', carId:'' }, '10':{ unit:'B101', carId:'' },
-  '11':{ unit:'B102', carId:'' }, '12':{ unit:'B103', carId:'' },
-  '13':{ unit:'', carId:'' },
+  '01':{ unit:'B102', carId:'' },
+  '02':{ unit:'102',  carId:'' },
+  '03':{ unit:'101',  carId:'' },
+  '04':{ unit:'201',  carId:'' },
+  '05':{ unit:'203',  carId:'' },
+  '06':{ unit:'202',  carId:'' },
+  '07':{ unit:'B101', carId:'' },
+  '08':{ unit:'103',  carId:'' },
+  '09':{ unit:'301',  carId:'' },
+  '10':{ unit:'302',  carId:'' },  // 경차 고정
+  '11':{ unit:'303',  carId:'' },
+  '12':{ unit:'B101', carId:'' },  // 전기차 고정
+  '13':{ unit:'302',  carId:'' },  // 고정
 });
 
 export const INIT_STATE = {

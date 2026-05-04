@@ -431,12 +431,17 @@ function AdminSpots({ state, dispatch }) {
       </div>
 
       <div style={{ background:'#fef9c3', border:'0.5px solid #fde68a', borderRadius:12, padding:14 }}>
-        <h3 style={{ fontSize:13, fontWeight:500, color:'#92400e', marginBottom:8 }}>주차면 자동배정</h3>
-        <p style={{ fontSize:11, color:'#a16207', lineHeight:1.8 }}>
-          · 매월 1일 00시에 주차면이 순차적으로 자동 변경됩니다. (예: 01 → 02)<br/>
-          · 경차(10면)와 전기차(12면) 주차면은 변경되지 않는 고정석입니다.<br/>
-          · 자동 변경이 되지 않은 경우, 주차면별로 직접 설정해 주세요.
+        <h3 style={{ fontSize:13, fontWeight:500, color:'#92400e', marginBottom:8 }}>주차면 자동 순환</h3>
+        <p style={{ fontSize:11, color:'#a16207', lineHeight:1.9, marginBottom:12 }}>
+          · 매월 1일 00시에 순환 대상 면의 호수가 한 칸씩 이동합니다.<br/>
+          · 순환 순서: 01→02→03→04→05→06→07→08→09→11→01<br/>
+          · 10면(경차), 12면(전기차), 13면은 순환에서 제외된 고정 자리입니다.
         </p>
+        <button
+          onClick={() => { if(window.confirm('지금 바로 순환을 실행하시겠어요?\n이 작업은 되돌릴 수 없습니다.')) dispatch({ type:'ROTATE_SPOTS' }); }}
+          style={{ width:'100%', padding:'10px', borderRadius:10, border:'0.5px solid #fde68a', background:'#fef3c7', color:'#92400e', fontSize:12, fontWeight:500, cursor:'pointer', fontFamily:'var(--font-sans)' }}>
+          수동으로 지금 순환 실행
+        </button>
       </div>
     </>
   );

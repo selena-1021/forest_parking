@@ -1,5 +1,5 @@
 import { useReducer, useEffect, useRef, useState } from 'react';
-import { INIT_STATE } from './data/store';
+import { INIT_STATE, ROTATE_ORDER } from './data/store';
 import { getTodayVisits } from './utils/helpers';
 import { loadFromSupabase, saveToSupabase } from './lib/supabase';
 import ParkingMap from './components/ParkingMap';
@@ -21,7 +21,21 @@ function reducer(state, action) {
     case 'SETTINGS':      return { ...state, title:action.title, pw:action.pw };
     case 'ADD_ADMIN':     return { ...state, admins:[...state.admins, action.unit] };
     case 'REVOKE_ADMIN':  return state.admins.length<=1?state:{...state,admins:state.admins.filter(a=>a!==action.unit)};
-    case 'SET_SHEET':     return { ...state, sheet:action.id };
+    case 'SET_LAST_ROTATED': return { ...state, lastRotated: action.month };
+    case 'ROTATE_SPOTS': {
+      // ROTATE_ORDER 순서로 한 칸씩 호수를 이동 (01→02→...→09→11→01)
+      const newAsgn = { ...state.asgn };
+      const order = ROTATE_ORDER;
+      // 마지막 면의 unit을 임시 저장
+      const last = { ...newAsgn[order[order.length - 1]] };
+      // 뒤에서부터 앞 면의 값으로 덮어씀
+      for (let i = order.length - 1; i > 0; i--) {
+        newAsgn[order[i]] = { ...newAsgn[order[i-1]] };
+      }
+      // 첫 번째 면에 마지막 값 배정 (순환)
+      newAsgn[order[0]] = last;
+      return { ...state, asgn: newAsgn };
+    }
     case 'TOGGLE_VSHEET': return { ...state, visitorSheet:!state.visitorSheet };
     case 'CLOSE_VSHEET':  return { ...state, visitorSheet:false };
     case 'TOGGLE_DD':     return { ...state, ddOpen:!state.ddOpen };
@@ -37,7 +51,7 @@ const FULL_INIT = {
 };
 
 /* ─── 저장 대상 키 ─── */
-const PERSIST_KEYS = ['pw','title','admins','asgn','res','visits'];
+const PERSIST_KEYS = ['pw','title','admins','asgn','res','visits','lastRotated'];
 
 export default function App() {
   const [state, dispatch]   = useReducer(reducer, FULL_INIT);
@@ -63,7 +77,18 @@ export default function App() {
     return () => clearTimeout(saveTimer.current);
   }, PERSIST_KEYS.map(k => state[k]));
 
-  const isAdmin = state.admins.includes(state.me);
+  /* 매월 1일 00시 자동 순환 체크 */
+  useEffect(() => {
+    if (loading) return;
+    const now = new Date();
+    const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    // 마지막 순환 월과 비교 — 이번 달 1일 이후 아직 안 돌렸으면 실행
+    const lastRotated = state.lastRotated || '';
+    if (now.getDate() >= 1 && lastRotated !== thisMonth) {
+      dispatch({ type:'ROTATE_SPOTS' });
+      dispatch({ type:'SET_LAST_ROTATED', month: thisMonth });
+    }
+  }, [loading]);
   const now = new Date();
   const mo  = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
 
