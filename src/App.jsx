@@ -84,7 +84,7 @@ export default function App() {
     const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     // 마지막 순환 월과 비교 — 이번 달 1일 이후 아직 안 돌렸으면 실행
     const lastRotated = state.lastRotated || '';
-    if (now.getDate() >= 1 && lastRotated !== thisMonth) {
+    if (now.getDate() === 1 && lastRotated !== thisMonth) {
       dispatch({ type:'ROTATE_SPOTS' });
       dispatch({ type:'SET_LAST_ROTATED', month: thisMonth });
     }
