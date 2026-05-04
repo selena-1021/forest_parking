@@ -22,20 +22,16 @@ export const getTodayVisits = (visits) => {
     });
 };
 
-export function drawQRCanvas(canvas, url) {
+export async function drawQRCanvas(canvas, url) {
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const sz = 120, cs = sz / 21;
-  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,sz,sz);
-  [[0,0],[14,0],[0,14]].forEach(([ox,oy]) => {
-    ctx.fillStyle='#111'; ctx.fillRect(ox*cs,oy*cs,7*cs,7*cs);
-    ctx.fillStyle='#fff'; ctx.fillRect((ox+1)*cs,(oy+1)*cs,5*cs,5*cs);
-    ctx.fillStyle='#111'; ctx.fillRect((ox+2)*cs,(oy+2)*cs,3*cs,3*cs);
-  });
-  let h = 0;
-  for (let i=0;i<url.length;i++) h=(h*31+url.charCodeAt(i))>>>0;
-  for (let r=0;r<21;r++) for (let c=0;c<21;c++){
-    if((r<8&&c<8)||(r<8&&c>12)||(r>12&&c<8)) continue;
-    if(((h^(r*21+c)*2654435761)>>>0)%3===0){ctx.fillStyle='#111';ctx.fillRect(c*cs,r*cs,cs,cs);}
+  try {
+    const QRCode = (await import('qrcode')).default;
+    await QRCode.toCanvas(canvas, url, {
+      width: 160,
+      margin: 2,
+      color: { dark: '#111111', light: '#ffffff' },
+    });
+  } catch (e) {
+    console.error('QR 생성 실패:', e);
   }
 }

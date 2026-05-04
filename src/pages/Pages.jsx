@@ -435,7 +435,7 @@ function AdminQR({ state }) {
           </div>
           <div style={{ padding:18, display:'flex', flexDirection:'column', alignItems:'center', gap:8, background:'#f8fafc' }}>
             <div style={{ background:'#fff', padding:9, borderRadius:8 }}>
-              <canvas ref={refs[cfg.key]} width={120} height={120} />
+              <canvas ref={refs[cfg.key]} width={160} height={160} />
             </div>
             <div style={{ fontSize:12, fontWeight:500 }}>{cfg.guide}</div>
             <div style={{ fontSize:10, color:'#94a3b8' }}>{cfg.url}</div>
