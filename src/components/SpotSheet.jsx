@@ -1,5 +1,5 @@
 import { SPOT_TYPE, SC } from '../data/store';
-import { mCar, doCall } from '../utils/helpers';
+import { mCar, mPhone, doCall } from '../utils/helpers';
 
 const TYPE_LABEL = { c: '경차전용', e: '전기차전용', g: '일반' };
 const TYPE_STYLE = {
@@ -34,7 +34,7 @@ export default function SpotSheet({ spotId, state, onClose }) {
           {res ? (
             <>
               <div style={{ background:'#f8fafc', border:'0.5px solid #e2e8f0', borderRadius:12, overflow:'hidden', marginBottom:16 }}>
-                {[['호수', `${u}호`], ['차량번호', carDisplay], ...(res.model ? [['차량 모델', res.model]] : []), ...(isMe ? [['연락처', res.phone]] : [])].map(([k,v]) => (
+                {[['호수', `${u}호`], ['차량번호', carDisplay], ...(res.model ? [['차량 모델', res.model]] : []), ...(isMe ? [['연락처', mPhone(res.phone)]] : [])].map(([k,v]) => (
                   <div key={k} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'13px 16px', borderBottom:'0.5px solid #f1f5f9' }}>
                     <span style={{ fontSize:13, color:'#64748b' }}>{k}</span>
                     <span style={{ fontSize:14, fontWeight:500 }}>{v}</span>
