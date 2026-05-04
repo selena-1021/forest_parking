@@ -22,6 +22,20 @@ export const getTodayVisits = (visits) => {
     });
 };
 
+// 방문 종료 후 24시간 이내인 것만 보여줌 (보유기간 정책 반영)
+export const filterValidVisits = (visits) => {
+  const now = Date.now();
+  return visits.filter(v => {
+    const last = v.periods?.[v.periods.length - 1];
+    if (!last?.e || !last?.t) return true;
+    // 종료일 + 종료시각 → Date 객체로 변환
+    const endStr = `${last.e}T${last.t}:00`;
+    const endMs  = new Date(endStr).getTime();
+    // 24시간(86400000ms) 이내이면 유지
+    return now - endMs < 86400000;
+  });
+};
+
 export async function drawQRCanvas(canvas, url) {
   if (!canvas) return;
   try {

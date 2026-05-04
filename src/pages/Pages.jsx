@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { UNITS_DEF, QR_CFGS, BASE, newCar } from '../data/store';
-import { mCar, nP, today, doCall, getTodayVisits, drawQRCanvas } from '../utils/helpers';
+import { mCar, nP, today, doCall, getTodayVisits, drawQRCanvas, filterValidVisits } from '../utils/helpers';
 import PeriodFields from '../components/PeriodFields';
+import ConsentBox from '../components/ConsentBox';
 
 /* ─── 공통 스타일 ─── */
 function Field({ label, required, error, children }) {
@@ -94,6 +95,7 @@ export function VisitorFormPage({ state, dispatch }) {
   const [periods, setPeriods] = useState([nP()]);
   const [errs, setErrs]   = useState({});
   const [done, setDone]   = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const fixed = !!state.vfHost;
 
   const submit = () => {
@@ -146,7 +148,10 @@ export function VisitorFormPage({ state, dispatch }) {
           <input type="tel" value={phone} onChange={e=>{setPhone(e.target.value);setErrs(p=>({...p,phone:''}));}} placeholder="010-0000-0000" style={INP(errs.phone)} />
         </Field>
         <PeriodFields periods={periods} setPeriods={setPeriods} />
-        <button onClick={submit} style={{ ...BTN(false), marginTop:8 }}>예약 등록하기</button>
+        <ConsentBox type="B" checked={agreed} onChange={setAgreed} />
+        <button onClick={submit}
+          style={{ ...BTN(false), marginTop:0, background: agreed ? '#3b82f6' : '#e2e8f0', color: agreed ? '#fff' : '#94a3b8', cursor: agreed ? 'pointer' : 'not-allowed' }}
+          disabled={!agreed}>예약 등록하기</button>
         <div style={{ marginTop:14, padding:'10px 12px', background:'#f8fafc', borderRadius:10, border:'0.5px solid #e2e8f0' }}>
           <p style={{ fontSize:11, color:'#64748b', lineHeight:1.7 }}>· 원활한 주차 관리를 위해 방문 정보를 등록해 주세요.</p>
           <p style={{ fontSize:11, color:'#64748b', lineHeight:1.7 }}>· 차량번호와 연락처 일부는 별표(*)로 가려져 표시됩니다.</p>
@@ -166,19 +171,16 @@ export function VisitorFormPage({ state, dispatch }) {
 export function MyInfoPage({ state, dispatch }) {
   const unitData = state.res[state.me] || { cars:[newCar()] };
   const [cars, setCars] = useState(() => unitData.cars.length ? unitData.cars : [newCar()]);
+  const [agreed, setAgreed] = useState(false);
   const [saved, setSaved] = useState(false);
 
   const updateCar = (id, field, value) =>
     setCars(prev => prev.map(c => c.id===id ? {...c, [field]:value} : c));
-
-  const addCar = () => setCars(prev => [...prev, newCar()]);
-
-  const removeCar = (id) => {
-    if (cars.length <= 1) return;
-    setCars(prev => prev.filter(c => c.id !== id));
-  };
+  const addCar    = () => setCars(prev => [...prev, newCar()]);
+  const removeCar = (id) => { if (cars.length <= 1) return; setCars(prev => prev.filter(c => c.id !== id)); };
 
   const save = () => {
+    if (!agreed) return;
     dispatch({ type:'UPDATE_CARS', unit:state.me, cars });
     setSaved(true); setTimeout(()=>setSaved(false), 2000);
   };
@@ -194,20 +196,12 @@ export function MyInfoPage({ state, dispatch }) {
             <span style={{ fontSize:13, fontWeight:500, color:'#374151' }}>차량 {idx+1}</span>
             {cars.length > 1 && (
               <button onClick={()=>removeCar(car.id)}
-                style={{ background:'none', border:'0.5px solid #fca5a5', borderRadius:8, padding:'3px 10px', fontSize:11, color:'#ef4444', cursor:'pointer' }}>
-                삭제
-              </button>
+                style={{ background:'none', border:'0.5px solid #fca5a5', borderRadius:8, padding:'3px 10px', fontSize:11, color:'#ef4444', cursor:'pointer' }}>삭제</button>
             )}
           </div>
-          <Field label="차량번호">
-            <input value={car.car} onChange={e=>updateCar(car.id,'car',e.target.value)} placeholder="12가3456" style={INP()} />
-          </Field>
-          <Field label="차량 모델">
-            <input value={car.model} onChange={e=>updateCar(car.id,'model',e.target.value)} placeholder="예: 제네시스" style={INP()} />
-          </Field>
-          <Field label="연락처">
-            <input type="tel" value={car.phone} onChange={e=>updateCar(car.id,'phone',e.target.value)} placeholder="010-0000-0000" style={INP()} />
-          </Field>
+          <Field label="차량번호"><input value={car.car} onChange={e=>updateCar(car.id,'car',e.target.value)} placeholder="12가3456" style={INP()} /></Field>
+          <Field label="차량 모델"><input value={car.model} onChange={e=>updateCar(car.id,'model',e.target.value)} placeholder="예: 제네시스" style={INP()} /></Field>
+          <Field label="연락처"><input type="tel" value={car.phone} onChange={e=>updateCar(car.id,'phone',e.target.value)} placeholder="010-0000-0000" style={INP()} /></Field>
         </div>
       ))}
 
@@ -216,7 +210,11 @@ export function MyInfoPage({ state, dispatch }) {
         + 차량 추가
       </button>
 
-      <button onClick={save} style={BTN(saved)}>
+      <ConsentBox type="A" checked={agreed} onChange={setAgreed} />
+
+      <button onClick={save}
+        style={{ ...BTN(saved), background: saved ? '#f0fdf4' : agreed ? '#3b82f6' : '#e2e8f0', color: saved ? '#15803d' : agreed ? '#fff' : '#94a3b8', cursor: agreed ? 'pointer' : 'not-allowed' }}
+        disabled={!agreed}>
         {saved ? '✓ 저장됨' : '저장하기'}
       </button>
     </div>
@@ -231,16 +229,18 @@ export function VisitorsPage({ state, dispatch }) {
   const [periods, setPeriods] = useState([nP()]);
   const [errs, setErrs]   = useState({});
   const [saved, setSaved] = useState(false);
-  const my = state.visits.filter(v=>v.host===state.me);
+  const [agreed, setAgreed] = useState(false);
+  const my = filterValidVisits(state.visits.filter(v=>v.host===state.me));
   const vLink = `${BASE}/visit?host=${state.me}`;
 
   const submit = () => {
     const e = {};
     if (!car)   e.car   = '차량번호를 입력해주세요';
     if (!phone) e.phone = '연락처를 입력해주세요';
+    if (!agreed) return;
     if (Object.keys(e).length) { setErrs(e); return; }
     dispatch({ type:'ADD_VISIT', visit:{ id:Date.now(), host:state.me, car, model, phone, periods:[...periods] } });
-    setCar(''); setModel(''); setPhone(''); setPeriods([nP()]); setErrs({});
+    setCar(''); setModel(''); setPhone(''); setPeriods([nP()]); setErrs({}); setAgreed(false);
     setSaved(true); setTimeout(()=>setSaved(false),2000);
   };
 
@@ -272,7 +272,10 @@ export function VisitorsPage({ state, dispatch }) {
         <input type="tel" value={phone} onChange={e=>{setPhone(e.target.value);setErrs(p=>({...p,phone:''}));}} placeholder="010-0000-0000" style={INP(errs.phone)} />
       </Field>
       <PeriodFields periods={periods} setPeriods={setPeriods} />
-      <button onClick={submit} style={{ ...BTN(saved), marginTop:4 }}>
+      <ConsentBox type="C" checked={agreed} onChange={setAgreed} />
+      <button onClick={submit}
+        style={{ ...BTN(saved), marginTop:0, background: saved?'#f0fdf4': agreed?'#3b82f6':'#e2e8f0', color: saved?'#15803d': agreed?'#fff':'#94a3b8', cursor: agreed?'pointer':'not-allowed' }}
+        disabled={!agreed}>
         {saved?'✓ 등록 완료':'예약 등록하기'}
       </button>
 

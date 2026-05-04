@@ -176,11 +176,25 @@ export default function HelpPage() {
       {/* 7. 개인정보 */}
       <div style={S.section}>
         <div style={S.secHead}><span style={S.secEmoji}>🔒</span><span style={S.secTitle}>개인정보 보호 정책</span></div>
+        <div style={S.card}>
+          <div style={S.cardTitle}>등록 시 개인정보 동의가 필요해요</div>
+          <div style={S.cardBody}>
+            정보를 등록할 때마다 <b>개인정보 수집·이용 동의</b>를 해야 해요.<br/>
+            동의 체크박스를 체크해야 <b>등록 버튼이 활성화</b>돼요.<br/><br/>
+            · <b>내 정보 등록</b> — 입주민 개인정보 수집 동의 (퇴거 시까지 보유)<br/>
+            · <b>방문자 직접 등록</b> — 방문객 개인정보 수집 동의 (출차 후 24시간 자동 파기)<br/>
+            · <b>호스트 대리 등록</b> — 방문객에게 사전 동의를 받았음을 확인
+          </div>
+        </div>
         <div style={S.warn}>
           🛡️ <b>이 앱은 개인정보를 안전하게 보호해요.</b><br/><br/>
           · 다른 집 차량번호 → 앞부분 <b>별표(***)로 가려져요</b><br/>
           · 전화번호 → 화면에 <b>절대 표시 안 됨</b><br/>
+          · 방문자 정보 → 출차 후 <b>24시간 뒤 자동 파기</b><br/>
           · 내 정보만 전체 확인 가능해요
+        </div>
+        <div style={{ background:'var(--color-background-danger)', border:'0.5px solid var(--color-border-danger)', borderRadius:'var(--border-radius-lg)', padding:'12px 14px', fontSize:12, color:'var(--color-text-danger)', lineHeight:1.7 }}>
+          ⚠️ 타인의 개인정보를 무단으로 이용할 경우 「개인정보 보호법」에 따라 법적 처벌의 대상이 될 수 있습니다.
         </div>
       </div>
 
