@@ -38,6 +38,7 @@ function reducer(state, action) {
     }
     case 'TOGGLE_VSHEET': return { ...state, visitorSheet:!state.visitorSheet };
     case 'CLOSE_VSHEET':  return { ...state, visitorSheet:false };
+    case 'SET_SHEET':     return { ...state, sheet:action.id };
     case 'TOGGLE_DD':     return { ...state, ddOpen:!state.ddOpen };
     case 'CLOSE_DD':      return { ...state, ddOpen:false };
     case 'LOAD':          return { ...state, ...action.saved };
