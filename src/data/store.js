@@ -31,7 +31,7 @@ export const SC = {
 };
 
 export const UNITS_DEF = ['101','102','103','201','202','203','301','302','303','B101','B102','B103'];
-export const BASE = 'https://villa-parking.app';
+export const BASE = 'https://forest-parking.vercel.app';
 export const QR_CFGS = [
   { key:'main',    label:'메인 접속 QR',   desc:'거주자용 — 스캔 시 메인 로그인 페이지로 접속됩니다.',     guide:'우리 빌라 주차 현황 보기', url:`${BASE}/` },
   { key:'visitor', label:'방문객 등록 QR', desc:'외부인용 — 스캔 시 즉시 방문자 등록 폼으로 이동합니다.', guide:'방문객 차량 등록하기',      url:`${BASE}/visit` },
