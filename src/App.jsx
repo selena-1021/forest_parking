@@ -5,6 +5,7 @@ import ParkingMap from './components/ParkingMap';
 import SpotSheet  from './components/SpotSheet';
 import VisitSheet from './components/VisitSheet';
 import { LoginPage, VisitorFormPage, VisitorsPage, MyInfoPage, AdminPage } from './pages/Pages';
+import HelpPage from './pages/HelpPage';
 
 const STORAGE_KEY = 'villa_parking_state';
 
@@ -102,6 +103,7 @@ export default function App() {
             <div style={{ position:'absolute', top:'calc(100% + 4px)', right:0, background:'#fff', border:'0.5px solid #e2e8f0', borderRadius:12, minWidth:150, zIndex:50, overflow:'hidden', boxShadow:'0 4px 16px rgba(0,0,0,.08)' }}>
               <button onClick={()=>dispatch({type:'GOTO',page:'myinfo'})} style={{ display:'block', width:'100%', padding:'11px 14px', border:'none', background:'transparent', cursor:'pointer', fontSize:13, textAlign:'left' }}>내 정보</button>
               {isAdmin && <button onClick={()=>dispatch({type:'GOTO',page:'admin'})} style={{ display:'block', width:'100%', padding:'11px 14px', border:'none', background:'transparent', cursor:'pointer', fontSize:13, textAlign:'left' }}>주차장 관리</button>}
+              <button onClick={()=>dispatch({type:'GOTO',page:'help'})} style={{ display:'block', width:'100%', padding:'11px 14px', border:'none', background:'transparent', cursor:'pointer', fontSize:13, textAlign:'left' }}>📖 도움말</button>
               <div style={{ height:'0.5px', background:'#f1f5f9' }} />
               <button onClick={()=>dispatch({type:'LOGOUT'})} style={{ display:'block', width:'100%', padding:'11px 14px', border:'none', background:'transparent', cursor:'pointer', fontSize:13, textAlign:'left', color:'#ef4444' }}>로그아웃</button>
             </div>
@@ -123,6 +125,7 @@ export default function App() {
         {state.page==='visitors' && <VisitorsPage state={state} dispatch={dispatch} />}
         {state.page==='myinfo'   && <MyInfoPage   state={state} dispatch={dispatch} />}
         {state.page==='admin' && isAdmin && <AdminPage state={state} dispatch={dispatch} />}
+        {state.page==='help' && <HelpPage />}
         <div style={{ height:24 }} />
       </div>
 
