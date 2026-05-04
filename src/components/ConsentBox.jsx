@@ -87,33 +87,33 @@ export default function ConsentBox({ type, checked, onChange }) {
           style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.5)', zIndex:9999, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
           onClick={e => e.target === e.currentTarget && setOpen(false)}
         >
-          <div style={{ width:'100%', maxWidth:390, background:'var(--color-background-primary)', borderRadius:'22px 22px 0 0', maxHeight:'85vh', display:'flex', flexDirection:'column', overflow:'hidden' }}>
+          <div style={{ width:'100%', maxWidth:390, background:'#ffffff', borderRadius:'22px 22px 0 0', maxHeight:'85vh', display:'flex', flexDirection:'column', overflow:'hidden' }}>
             {/* 핸들 */}
-            <div style={{ width:40, height:4, background:'var(--color-border-secondary)', borderRadius:2, margin:'12px auto 0', flexShrink:0 }} />
+            <div style={{ width:40, height:4, background:'#e2e8f0', borderRadius:2, margin:'12px auto 0', flexShrink:0 }} />
 
             {/* 헤더 */}
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 18px 10px', flexShrink:0, borderBottom:'0.5px solid var(--color-border-tertiary)' }}>
-              <span style={{ fontSize:16, fontWeight:500, color:'var(--color-text-primary)' }}>{data.modalTitle}</span>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 18px 10px', flexShrink:0, borderBottom:'0.5px solid #f1f5f9' }}>
+              <span style={{ fontSize:16, fontWeight:500, color:'#1e293b' }}>{data.modalTitle}</span>
               <button
                 onClick={() => setOpen(false)}
                 style={{
                   width:30, height:30,
                   display:'flex', alignItems:'center', justifyContent:'center',
-                  background:'var(--color-background-secondary)',
-                  border:'0.5px solid var(--color-border-secondary)',
+                  background:'#f8fafc',
+                  border:'0.5px solid #e2e8f0',
                   borderRadius:8, cursor:'pointer',
                   fontSize:14, fontWeight:500,
-                  color:'var(--color-text-secondary)',
+                  color:'#64748b',
                   flexShrink:0, lineHeight:1,
                 }}
               >✕</button>
             </div>
 
             {/* 내용 */}
-            <div style={{ flex:1, overflowY:'auto', padding:'16px 18px 32px' }}>
+            <div style={{ flex:1, overflowY:'auto', padding:'16px 18px 32px', background:'#ffffff' }}>
               {/* 대리 등록 강조 배너 (케이스 C) */}
               {data.showProxy && (
-                <div style={{ background:'var(--color-background-warning)', border:'0.5px solid var(--color-border-warning)', borderRadius:10, padding:'10px 12px', marginBottom:14, fontSize:12, color:'var(--color-text-warning)', lineHeight:1.7 }}>
+                <div style={{ background:'#fef9c3', border:'0.5px solid #fde68a', borderRadius:10, padding:'10px 12px', marginBottom:14, fontSize:12, color:'#92400e', lineHeight:1.7 }}>
                   📋 <strong>대리 등록 안내</strong><br/>
                   방문객을 대신하여 등록하는 경우, 해당 방문객에게 개인정보 수집에 대한 사전 동의를 얻어야 하며 이에 대한 책임은 등록자에게 있습니다.
                 </div>
@@ -122,13 +122,13 @@ export default function ConsentBox({ type, checked, onChange }) {
               {/* 항목별 내용 */}
               {data.items.map(item => (
                 <div key={item.label} style={{ marginBottom:14 }}>
-                  <div style={{ fontSize:11, fontWeight:500, color:'var(--color-text-secondary)', marginBottom:4, textTransform:'uppercase', letterSpacing:.5 }}>{item.label}</div>
-                  <div style={{ fontSize:13, color:'var(--color-text-primary)', lineHeight:1.8 }}>{item.value}</div>
+                  <div style={{ fontSize:11, fontWeight:500, color:'#64748b', marginBottom:4, textTransform:'uppercase', letterSpacing:.5 }}>{item.label}</div>
+                  <div style={{ fontSize:13, color:'#1e293b', lineHeight:1.8 }}>{item.value}</div>
                 </div>
               ))}
 
               {/* 법적 경고 */}
-              <div style={{ background:'var(--color-background-danger)', border:'0.5px solid var(--color-border-danger)', borderRadius:10, padding:'10px 12px', marginTop:8, fontSize:12, color:'var(--color-text-danger)', lineHeight:1.7 }}>
+              <div style={{ background:'#fef2f2', border:'0.5px solid #fecaca', borderRadius:10, padding:'10px 12px', marginTop:8, fontSize:12, color:'#991b1b', lineHeight:1.7 }}>
                 {LEGAL}
               </div>
             </div>
