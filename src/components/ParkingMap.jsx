@@ -26,11 +26,11 @@ export default function ParkingMap({ state, onSpotClick }) {
         const u    = info.unit || '';
         const unitRes = u ? res[u] : null;
 
-        // 배정된 차량 찾기 (carId 매칭, 없으면 첫 번째 차)
+        // carId가 명시적으로 지정된 경우만 차량 표시 (없으면 미등록)
         const cars = unitRes?.cars || [];
         const assignedCar = info.carId
-          ? (cars.find(c => c.id === info.carId) || cars[0])
-          : cars[0];
+          ? (cars.find(c => c.id === info.carId) || null)
+          : null;
         const modelText = assignedCar?.model || '';
 
         const is07 = id === '07';

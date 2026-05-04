@@ -15,7 +15,7 @@ export default function SpotSheet({ spotId, state, onClose }) {
   const u    = info.unit || '';
   const unitRes = u ? state.res[u] : null;
   const cars = unitRes?.cars || [];
-  const car  = info.carId ? (cars.find(c=>c.id===info.carId)||cars[0]) : cars[0];
+  const car  = info.carId ? (cars.find(c=>c.id===info.carId)||null) : null;
   const isMe = u === state.me;
   const ts   = TYPE_STYLE[t];
 
@@ -63,6 +63,18 @@ export default function SpotSheet({ spotId, state, onClose }) {
                 </button>
               )}
             </>
+          ) : u && !car ? (
+            /* 호수는 배정됐지만 차량이 아직 미등록 */
+            <div style={{ background:'#f8fafc', border:'0.5px solid #e2e8f0', borderRadius:12, overflow:'hidden' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'13px 16px' }}>
+                <span style={{ fontSize:13, color:'#64748b' }}>호수</span>
+                <span style={{ fontSize:14, fontWeight:500 }}>{u}호</span>
+              </div>
+              <div style={{ padding:'12px 16px', borderTop:'0.5px solid #f1f5f9', background:'#fffbeb' }}>
+                <p style={{ fontSize:13, color:'#92400e' }}>차량 정보가 아직 등록되지 않았어요.</p>
+                <p style={{ fontSize:11, color:'#a16207', marginTop:4, lineHeight:1.6 }}>거주자가 내 정보에서 차량을 등록하거나,<br/>관리자가 주차면 배정에서 차량을 선택해 주세요.</p>
+              </div>
+            </div>
           ) : (
             <p style={{ fontSize:14, color:'#94a3b8' }}>미배정 주차면입니다.</p>
           )}
