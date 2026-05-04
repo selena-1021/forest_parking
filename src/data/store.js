@@ -1,20 +1,23 @@
 // ─── 레이아웃 상수 ───────────────────────────────────────
 export const W=24, H=14, RG=1.2, LX=1, BLDG=82, RX=82-24;
-export const H07=24, W07=24;
+// 07면: 세로 방향 직사각형 (건물과 동일 방향 - 가로 좁고 세로 김)
+export const W07=16, H07=28;
 export const BT_Y = 1 + 6*H + 5*RG + 2;
 export const GAP3 = (BLDG - LX - 3*W) / 2;
 export const BM_X = LX + W + GAP3;
 
 export function spotPos(id) {
   const n = parseInt(id);
+  // 07면 x: 우측열 오른쪽 끝(RX+W=82)에서 W07만큼 왼쪽 → 우측 정렬
+  const X07 = RX + W - W07;
   if (n >= 1 && n <= 6) return { x: LX, y: 1 + (n-1)*(H+RG), w: W, h: H };
-  if (id === '07') return { x: RX, y: 1, w: W07, h: H07 };
-  if (id === '08') return { x: RX, y: 1+H07+RG, w: W, h: H };
-  if (id === '09') return { x: RX, y: 1+H07+RG+H+RG, w: W, h: H };
-  if (id === '10') return { x: RX, y: 1+H07+RG+2*(H+RG), w: W, h: H };
-  if (id === '11') return { x: LX, y: BT_Y, w: W, h: H };
+  if (id === '07') return { x: X07, y: 1, w: W07, h: H07 };
+  if (id === '08') return { x: RX,  y: 1+H07+RG,        w: W, h: H };
+  if (id === '09') return { x: RX,  y: 1+H07+RG+H+RG,   w: W, h: H };
+  if (id === '10') return { x: RX,  y: 1+H07+RG+2*(H+RG), w: W, h: H };
+  if (id === '11') return { x: LX,              y: BT_Y, w: W, h: H };
   if (id === '12') return { x: Math.round(BM_X), y: BT_Y, w: W, h: H };
-  if (id === '13') return { x: RX, y: BT_Y, w: W, h: H };
+  if (id === '13') return { x: RX,              y: BT_Y, w: W, h: H };
   return { x: 0, y: 0, w: W, h: H };
 }
 
