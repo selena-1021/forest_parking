@@ -38,15 +38,18 @@ export default function ParkingMap({ state, onSpotClick }) {
         const cy = p.y + p.h / 2;
         const clipId = `clip-${id}`;
 
-        // 줄 구성: NN면 호수 (한 줄) / 차종 (한 줄)
+        // 줄 구성
+        // - 일반면: "NN면 NNN호" 한 줄 + 차종
+        // - 07면:   "NN면" / "NNN호" 줄바꿈 + 차종 (폰트 크기는 동일)
+        const unitLabel = u ? `${u}호` : '';
         const rows = is07
           ? [
-              { text:`${id}면`, size:F.spot, fill:'#374151', weight:'500' },
-              u ? { text:u, size:F.unit, fill:'#000', weight:'700' } : null,
+              { text:`${id}면`, size:F.unit, fill:'#000', weight:'600' },
+              unitLabel ? { text:unitLabel, size:F.unit, fill:'#000', weight:'600' } : null,
               modelText ? { text:modelText, size:F.model, fill:'#9ca3af', weight:'400' } : null,
             ].filter(Boolean)
           : [
-              { text: u ? `${id}면  ${u}` : `${id}면`, size:F.unit, fill:'#000', weight:'600' },
+              { text: unitLabel ? `${id}면  ${unitLabel}` : `${id}면`, size:F.unit, fill:'#000', weight:'600' },
               modelText ? { text:modelText, size:F.model, fill:'#9ca3af', weight:'400' } : null,
             ].filter(Boolean);
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 /* ── 동의 내용 정의 ── */
 const CONSENT_DATA = {
@@ -80,10 +81,10 @@ export default function ConsentBox({ type, checked, onChange }) {
         </div>
       </div>
 
-      {/* 모달 */}
-      {open && (
+      {/* 모달 — body에 직접 렌더해서 부모 overflow:hidden에 의한 클리핑 방지 */}
+      {open && createPortal(
         <div
-          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.5)', zIndex:70, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
+          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.5)', zIndex:9999, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
           onClick={e => e.target === e.currentTarget && setOpen(false)}
         >
           <div style={{ width:'100%', maxWidth:390, background:'var(--color-background-primary)', borderRadius:'22px 22px 0 0', maxHeight:'85vh', display:'flex', flexDirection:'column', overflow:'hidden' }}>
@@ -133,7 +134,7 @@ export default function ConsentBox({ type, checked, onChange }) {
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
     </>
   );
 }
