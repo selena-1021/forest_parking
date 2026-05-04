@@ -58,6 +58,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const saveTimer = useRef(null);
   const isFirstLoad = useRef(true);
+  const isAdmin = state.admins.includes(state.me);
 
   /* 앱 시작: Supabase에서 불러오기 */
   useEffect(() => {
