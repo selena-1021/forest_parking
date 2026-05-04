@@ -96,8 +96,8 @@ export function VisitorFormPage({ state, dispatch }) {
   const submit = () => {
     const e = {};
     if (!host)  e.host  = '방문 호수를 선택해주세요';
-    if (!car)   e.car   = '차량번호를 입력해주세요';
-    if (!phone) e.phone = '연락처를 입력해주세요';
+
+
     if (Object.keys(e).length) { setErrs(e); return; }
     dispatch({ type:'ADD_VISIT', visit:{ id:Date.now(), host, car, model, phone, periods:[...periods] } });
     setDone(true);
@@ -139,7 +139,7 @@ export function VisitorFormPage({ state, dispatch }) {
           </Field>
         )}
 
-        <Field label="차량번호" required error={errs.car}>
+        <Field label="차량번호">
           <input value={car} onChange={e => { setCar(e.target.value); setErrs(p=>({...p,car:''})); }} placeholder="12가3456" style={INP(errs.car)} />
         </Field>
         <Field label="차량 모델">
@@ -184,8 +184,8 @@ export function VisitorsPage({ state, dispatch }) {
 
   const submit = () => {
     const e = {};
-    if (!car)   e.car   = '차량번호를 입력해주세요';
-    if (!phone) e.phone = '연락처를 입력해주세요';
+
+
     if (Object.keys(e).length) { setErrs(e); return; }
     dispatch({ type:'ADD_VISIT', visit:{ id:Date.now(), host:state.me, car, model, phone, periods:[...periods] } });
     setCar(''); setModel(''); setPhone(''); setPeriods([nP()]); setErrs({});
@@ -214,7 +214,7 @@ export function VisitorsPage({ state, dispatch }) {
         </div>
       </div>
 
-      <Field label="차량번호" required error={errs.car}>
+      <Field label="차량번호">
         <input value={car} onChange={e => { setCar(e.target.value); setErrs(p=>({...p,car:''})); }} placeholder="12가3456" style={INP(errs.car)} />
       </Field>
       <Field label="차량 모델">
@@ -264,8 +264,8 @@ export function MyInfoPage({ state, dispatch }) {
 
   const save = () => {
     const e = {};
-    if (!car)   e.car   = '차량번호를 입력해주세요';
-    if (!phone) e.phone = '연락처를 입력해주세요';
+
+
     if (Object.keys(e).length) { setErrs(e); return; }
     dispatch({ type:'UPDATE_RES', unit:state.me, data:{ car, model, phone } });
     setSaved(true); setTimeout(() => setSaved(false), 2000);
@@ -275,13 +275,13 @@ export function MyInfoPage({ state, dispatch }) {
     <div style={{ padding:'16px 14px 0' }}>
       <h2 style={{ fontSize:15, fontWeight:500, marginBottom:3 }}>내 정보</h2>
       <p style={{ fontSize:11, color:'#94a3b8', marginBottom:16, lineHeight:1.6 }}>차량 정보와 연락처를 수정할 수 있습니다</p>
-      <Field label="차량번호" required error={errs.car}>
+      <Field label="차량번호">
         <input value={car} onChange={e => { setCar(e.target.value); setErrs(p=>({...p,car:''})); }} placeholder="12가3456" style={INP(errs.car)} />
       </Field>
       <Field label="차량 모델">
         <input value={model} onChange={e => setModel(e.target.value)} placeholder="예: 제네시스" style={INP()} />
       </Field>
-      <Field label="연락처" required error={errs.phone}>
+      <Field label="연락처">
         <input type="tel" value={phone} onChange={e => { setPhone(e.target.value); setErrs(p=>({...p,phone:''})); }} placeholder="010-0000-0000" style={INP(errs.phone)} />
       </Field>
       <button onClick={save} style={{ width:'100%', padding:12, borderRadius:10, border: saved ? '0.5px solid #86efac' : 'none', background: saved ? '#f0fdf4' : '#3b82f6', color: saved ? '#15803d' : '#fff', fontSize:13, fontWeight:500, cursor:'pointer' }}>
@@ -314,28 +314,24 @@ export function AdminPage({ state, dispatch }) {
 
 function AdminSpots({ state, dispatch }) {
   const [spotId, setSpotId] = useState('01');
-  const [unit, setUnit]   = useState('');
-  const [car, setCar]     = useState('');
-  const [model, setModel] = useState('');
-  const [phone, setPhone] = useState('');
+  const [unit, setUnit] = useState('');
   const [saved, setSaved] = useState(false);
 
+  // spotId 변경 시 배정 호수 동기화
   useEffect(() => {
-    const u = state.asgn[spotId] || '';
-    const r = u ? state.res[u] || {} : {};
-    setUnit(u); setCar(r.car || ''); setModel(r.model || ''); setPhone(r.phone || '');
+    setUnit(state.asgn[spotId] || '');
     setSaved(false);
   }, [spotId]);
 
+  // 내 정보(res)가 외부에서 바뀌면 화면에 즉시 반영 (unit 유지)
+  const res = unit ? (state.res[unit] || {}) : {};
+
   const save = () => {
-    dispatch({ type:'SET_ASGN', spotId, unit, car, model, phone });
+    dispatch({ type:'SET_ASGN_UNIT', spotId, unit });
     setSaved(true); setTimeout(() => setSaved(false), 2000);
   };
 
-  const SPOT_TYPE_LABEL = (id) => {
-    const t = { '10':'(경차전용)', '12':'(전기차전용)' };
-    return t[id] || '';
-  };
+  const SPOT_TYPE_LABEL = (id) => ({ '10':'(경차전용)', '12':'(전기차전용)' }[id] || '');
 
   return (
     <>
@@ -348,15 +344,27 @@ function AdminSpots({ state, dispatch }) {
       </Field>
       <div style={{ background:'#f8fafc', border:'0.5px solid #e2e8f0', borderRadius:12, padding:14, marginBottom:14 }}>
         <Field label="배정 호수">
-          <select value={unit} onChange={e => setUnit(e.target.value)} style={SEL}>
+          <select value={unit} onChange={e => { setUnit(e.target.value); setSaved(false); }} style={SEL}>
             <option value="">없음 (빈자리)</option>
             {UNITS_DEF.map(u => <option key={u} value={u}>{u}호</option>)}
           </select>
         </Field>
-        <Field label="차량번호"><input value={car} onChange={e => setCar(e.target.value)} placeholder="12가3456" style={INP()} /></Field>
-        <Field label="차량 모델"><input value={model} onChange={e => setModel(e.target.value)} placeholder="예: 그랜저" style={INP()} /></Field>
-        <Field label="연락처"><input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="010-0000-0000" style={INP()} /></Field>
-        <button onClick={save} style={{ width:'100%', padding:12, borderRadius:10, border: saved ? '0.5px solid #86efac' : 'none', background: saved ? '#f0fdf4' : '#3b82f6', color: saved ? '#15803d' : '#fff', fontSize:13, fontWeight:500, cursor:'pointer', marginTop:4 }}>
+        {unit && (
+          <div style={{ background:'#f1f5f9', borderRadius:8, padding:'10px 12px', marginTop:4 }}>
+            <p style={{ fontSize:11, color:'#64748b', marginBottom:8 }}>
+              아래 정보는 거주자가 "내 정보"에서 직접 수정합니다.
+            </p>
+            {[['차량번호', res.car],['차량 모델', res.model],['연락처', res.phone]].map(([label, val]) => (
+              <div key={label} style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                <span style={{ fontSize:12, color:'#64748b' }}>{label}</span>
+                <span style={{ fontSize:12, color: val ? '#374151' : '#cbd5e1', fontWeight:500 }}>
+                  {val || '미입력'}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        <button onClick={save} style={{ width:'100%', padding:12, borderRadius:10, border: saved?'0.5px solid #86efac':'none', background: saved?'#f0fdf4':'#3b82f6', color: saved?'#15803d':'#fff', fontSize:13, fontWeight:500, cursor:'pointer', marginTop:12 }}>
           {saved ? '✓ 저장됨' : '저장하기'}
         </button>
       </div>

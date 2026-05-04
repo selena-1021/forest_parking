@@ -8,7 +8,6 @@ export const BM_X = LX + W + GAP3;
 
 export function spotPos(id) {
   const n = parseInt(id);
-  // 07면 x: 우측열 오른쪽 끝(RX+W=82)에서 W07만큼 왼쪽 → 우측 정렬
   const X07 = RX + W - W07;
   if (n >= 1 && n <= 6) return { x: LX, y: 1 + (n-1)*(H+RG), w: W, h: H };
   if (id === '07') return { x: X07, y: 1, w: W07, h: H07 };
@@ -40,24 +39,19 @@ export const QR_CFGS = [
   { key:'visitor', label:'방문객 등록 QR', desc:'외부인용 — 스캔 시 즉시 방문자 등록 폼으로 이동합니다.', guide:'방문객 차량 등록하기',      url:`${BASE}/visit` },
 ];
 
+// 초기 res: 모든 호수 빈값 (거주자가 직접 입력)
+const empty = () => ({ car:'', model:'', phone:'' });
+
 export const INIT_STATE = {
   in: false, me: null, pw: '1234', title: '우리빌라',
   admins: ['101'],
   asgn: { '01':'101','02':'102','03':'103','04':'201','05':'202','06':'203',
           '07':'301','08':'302','09':'303','10':'B101','11':'B102','12':'B103','13':'' },
   res: {
-    '101':{ car:'12가3456', model:'제네시스', phone:'010-1234-5678' },
-    '102':{ car:'34나5678', model:'아반떼',   phone:'010-2345-6789' },
-    '103':{ car:'56다7890', model:'카니발',   phone:'010-3456-7890' },
-    '201':{ car:'78라1234', model:'소나타',   phone:'010-4567-8901' },
-    '202':{ car:'90마5678', model:'스포티지', phone:'010-5678-9012' },
-    '203':{ car:'11바2233', model:'K5',       phone:'010-6789-0123' },
-    '301':{ car:'44사5566', model:'그랜저',   phone:'010-7890-1234' },
-    '302':{ car:'77아8899', model:'싼타페',   phone:'010-8901-2345' },
-    '303':{ car:'00자1122', model:'투싼',     phone:'010-9012-3456' },
-    'B101':{ car:'33차4455', model:'아이오닉5', phone:'010-1111-2222' },
-    'B102':{ car:'66카7788', model:'EV6',      phone:'010-3333-4444' },
-    'B103':{ car:'99타0011', model:'니로',     phone:'010-5555-6666' },
+    '101':empty(),'102':empty(),'103':empty(),
+    '201':empty(),'202':empty(),'203':empty(),
+    '301':empty(),'302':empty(),'303':empty(),
+    'B101':empty(),'B102':empty(),'B103':empty(),
   },
   visits: [],
 };

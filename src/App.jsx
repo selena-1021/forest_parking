@@ -14,6 +14,7 @@ function reducer(state, action) {
     case 'ADD_VISIT':      return { ...state, visits:[action.visit,...state.visits] };
     case 'DEL_VISIT':      return { ...state, visits:state.visits.filter(v=>v.id!==action.id) };
     case 'UPDATE_RES':     return { ...state, res:{...state.res,[action.unit]:{...state.res[action.unit],...action.data}} };
+    case 'SET_ASGN_UNIT': return { ...state, asgn:{...state.asgn,[action.spotId]:action.unit} };
     case 'SET_ASGN': {
       const nx={...state,asgn:{...state.asgn,[action.spotId]:action.unit}};
       if(action.unit) nx.res={...nx.res,[action.unit]:{...nx.res[action.unit],car:action.car,model:action.model,phone:action.phone}};
