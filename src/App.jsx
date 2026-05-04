@@ -76,7 +76,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* 배너 */}
+      {/* 배너 (메인만, 고정) */}
       {isMap && (
         <div onClick={()=>dispatch({type:'TOGGLE_VSHEET'})}
           style={{ margin:'10px 14px 0', padding:'12px 14px', borderRadius:12, border:'0.5px solid #93c5fd', background:'#eff6ff', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', flexShrink:0 }}>
@@ -85,14 +85,14 @@ export default function App() {
         </div>
       )}
 
-      {/* 맵 — flex-shrink:0 으로 고정, 스크롤 없이 표시 */}
-      {isMap && <ParkingMap state={state} onSpotClick={id=>dispatch({type:'SET_SHEET',id})} />}
-
-      {/* 페이지 콘텐츠 — 남은 공간에 overflow 스크롤 */}
-      <div style={{ flex:1, overflowY:'auto', paddingBottom:24 }}>
+      {/* 스크롤 영역: 맵(paddingTop 비율로 자동 높이) + 서브페이지 콘텐츠 */}
+      <div style={{ flex:1, overflowY:'auto', WebkitOverflowScrolling:'touch' }}>
+        {isMap && <ParkingMap state={state} onSpotClick={id=>dispatch({type:'SET_SHEET',id})} />}
         {state.page==='visitors' && <VisitorsPage state={state} dispatch={dispatch} />}
         {state.page==='myinfo'   && <MyInfoPage   state={state} dispatch={dispatch} />}
         {state.page==='admin' && isAdmin && <AdminPage state={state} dispatch={dispatch} />}
+        {/* 하단 여백 */}
+        <div style={{ height:24 }} />
       </div>
 
       {state.sheet && <SpotSheet spotId={state.sheet} state={state} onClose={()=>dispatch({type:'SET_SHEET',id:null})} />}
