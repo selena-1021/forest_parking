@@ -5,35 +5,68 @@ export default function PeriodFields({ periods, setPeriods }) {
   const remove = id => setPeriods(ps => ps.filter(p => p.id !== id));
   const add    = () => setPeriods(ps => [...ps, nP()]);
 
+  const inputStyle = {
+    width:'100%', padding:'8px 10px',
+    border:'0.5px solid #e2e8f0', borderRadius:8,
+    fontSize:12, outline:'none', background:'#fff',
+    color:'#1e293b', fontFamily:'var(--font-sans)',
+    boxSizing:'border-box',
+  };
+
   return (
-    <div>
-      <div className="flex justify-between items-center mb-2.5">
+    <div style={{ marginBottom:4 }}>
+      {/* 헤더 */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
         <span style={{ fontSize:12, fontWeight:500, color:'#64748b' }}>
           방문 기간 <span style={{ color:'#ef4444' }}>*</span>
         </span>
-        <button onClick={add} style={{ background:'none', border:'0.5px solid #3b82f6', borderRadius:8, padding:'5px 11px', fontSize:11, color:'#3b82f6', cursor:'pointer' }}>
+        <button onClick={add}
+          style={{ background:'none', border:'0.5px solid #3b82f6', borderRadius:8, padding:'5px 11px', fontSize:11, color:'#3b82f6', cursor:'pointer', fontFamily:'var(--font-sans)' }}>
           + 기간 추가
         </button>
       </div>
+
       {periods.map((p, i) => (
-        <div key={p.id} style={{ background:'#f8fafc', border:'0.5px solid #e2e8f0', borderRadius:12, padding:12, marginBottom:10 }}>
-          <div className="flex justify-between items-center mb-2.5">
+        <div key={p.id} style={{ background:'#f8fafc', border:'0.5px solid #e2e8f0', borderRadius:12, padding:14, marginBottom:10 }}>
+          {/* 기간 헤더 */}
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
             <span style={{ fontSize:12, fontWeight:500, color:'#64748b' }}>기간 {i+1}</span>
             {periods.length > 1 && (
-              <button onClick={() => remove(p.id)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:11, color:'#f87171' }}>삭제</button>
+              <button onClick={() => remove(p.id)}
+                style={{ background:'none', border:'none', cursor:'pointer', fontSize:11, color:'#f87171', fontFamily:'var(--font-sans)' }}>삭제</button>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            {[['시작일','date','s',today()], ['종료일','date','e',''], ['입차','time','f',''], ['출차','time','t','']].map(([label, type, key, min]) => (
-              <div key={key}>
-                <label style={{ fontSize:10, color:'#94a3b8', display:'block', marginBottom:3 }}>{label}</label>
-                <input
-                  type={type} value={p[key]} min={min || undefined}
-                  onChange={e => update(p.id, key, e.target.value)}
-                  style={{ width:'100%', padding:'7px 9px', border:'0.5px solid #e2e8f0', borderRadius:8, fontSize:11, outline:'none', background:'#fff' }}
-                />
-              </div>
-            ))}
+
+          {/* 날짜 행 */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:10 }}>
+            <div>
+              <label style={{ fontSize:11, color:'#94a3b8', display:'block', marginBottom:4 }}>시작일</label>
+              <input type="date" value={p.s} min={today()}
+                onChange={e => update(p.id, 's', e.target.value)}
+                style={inputStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize:11, color:'#94a3b8', display:'block', marginBottom:4 }}>종료일</label>
+              <input type="date" value={p.e}
+                onChange={e => update(p.id, 'e', e.target.value)}
+                style={inputStyle} />
+            </div>
+          </div>
+
+          {/* 시간 행 */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>
+              <label style={{ fontSize:11, color:'#94a3b8', display:'block', marginBottom:4 }}>입차 시간</label>
+              <input type="time" value={p.f}
+                onChange={e => update(p.id, 'f', e.target.value)}
+                style={inputStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize:11, color:'#94a3b8', display:'block', marginBottom:4 }}>출차 시간</label>
+              <input type="time" value={p.t}
+                onChange={e => update(p.id, 't', e.target.value)}
+                style={inputStyle} />
+            </div>
           </div>
         </div>
       ))}

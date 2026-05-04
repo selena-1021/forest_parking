@@ -230,8 +230,26 @@ export function VisitorsPage({ state, dispatch }) {
   const [errs, setErrs]   = useState({});
   const [saved, setSaved] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [copied, setCopied] = useState(false);
   const my = filterValidVisits(state.visits.filter(v=>v.host===state.me));
   const vLink = `${BASE}/visit?host=${state.me}`;
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(vLink);
+    } catch {
+      // clipboard API 실패 시 fallback (구형 브라우저/비HTTPS 대응)
+      const el = document.createElement('textarea');
+      el.value = vLink;
+      el.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const submit = () => {
     const e = {};
@@ -255,10 +273,12 @@ export function VisitorsPage({ state, dispatch }) {
           <div style={{ fontSize:10, color:'#94a3b8', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{vLink}</div>
         </div>
         <div style={{ display:'flex', flexDirection:'column', gap:5, flexShrink:0 }}>
-          <button onClick={()=>navigator.clipboard?.writeText(vLink)}
-            style={{ padding:'6px 10px', borderRadius:8, border:'0.5px solid #3b82f6', background:'#dbeafe', color:'#1d4ed8', fontSize:11, fontWeight:500, cursor:'pointer' }}>링크 복사</button>
+          <button onClick={copyLink}
+            style={{ padding:'6px 10px', borderRadius:8, border: copied ? '0.5px solid #86efac' : '0.5px solid #3b82f6', background: copied ? '#f0fdf4' : '#dbeafe', color: copied ? '#15803d' : '#1d4ed8', fontSize:11, fontWeight:500, cursor:'pointer', transition:'all .2s', fontFamily:'var(--font-sans)' }}>
+            {copied ? '✓ 복사됨' : '링크 복사'}
+          </button>
           <button onClick={()=>dispatch({type:'GOTO',page:'visitor-form',vfHost:state.me})}
-            style={{ padding:'6px 10px', borderRadius:8, border:'0.5px solid #e2e8f0', background:'transparent', color:'#64748b', fontSize:11, fontWeight:500, cursor:'pointer' }}>폼 열기</button>
+            style={{ padding:'6px 10px', borderRadius:8, border:'0.5px solid #e2e8f0', background:'transparent', color:'#64748b', fontSize:11, fontWeight:500, cursor:'pointer', fontFamily:'var(--font-sans)' }}>폼 열기</button>
         </div>
       </div>
 
